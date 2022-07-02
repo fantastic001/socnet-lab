@@ -20,13 +20,13 @@ public class CoalitionDetector<V, E> {
         this.component_detector = new ComponentDetector<V, E>(t);
         this.transformer = t; 
     }
-    public List<UndirectedSparseGraph<V, Integer>> detect() {
+    public List<UndirectedSparseGraph<V, Pair<V>>> detect() {
         if (! isClusterable()) return null;
         int componentNumber = 0;
         boolean finished = false; 
-        List<UndirectedSparseGraph<V, Integer>> result = new ArrayList<>();
+        List<UndirectedSparseGraph<V, Pair<V>>> result = new ArrayList<>();
         while (!finished) {
-            UndirectedSparseGraph<V, Integer> coalition = new UndirectedSparseGraph<>();
+            UndirectedSparseGraph<V, Pair<V>> coalition = new UndirectedSparseGraph<>();
             for (V x : graph.getVertices()) {
                 if (components.get(x) == componentNumber) {
                     // add this node to newly created subgraph
@@ -36,7 +36,7 @@ public class CoalitionDetector<V, E> {
             for (V x : coalition.getVertices()) {
                 for (V y : graph.getVertices()) {
                     if (! x.equals(y)) {
-                        coalition.addEdge(transformer.transform(x, y), x,y);
+                        coalition.addEdge(new Pair<V>(x, y), x,y);
                     }
                 }
             }
@@ -59,7 +59,7 @@ public class CoalitionDetector<V, E> {
         components = this.component_detector.detectComponents(this.graph);
         for (V x : graph.getVertices()) {
             for (V y : graph.getVertices()) {
-                if (components.get(x) == components.get(y) && !isPositive(x, y)) {
+                if (!x.equals(y) && components.get(x) == components.get(y) && !isPositive(x, y)) {
                     result.add(new Pair<V>(x, y));
                 }
             }
