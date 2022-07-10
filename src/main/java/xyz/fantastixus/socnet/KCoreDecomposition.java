@@ -7,6 +7,7 @@ import java.util.List;
 import edu.uci.ics.jung.graph.UndirectedGraph;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import edu.uci.ics.jung.graph.event.GraphEvent.Vertex;
+import edu.uci.ics.jung.graph.util.Pair;
 
 public class KCoreDecomposition<V, E> {
     private UndirectedGraph<V, E> g;
@@ -77,7 +78,7 @@ public class KCoreDecomposition<V, E> {
         return deg.get(v);
     }
 
-    public List<UndirectedGraph<V, E>> getSubnetworks() {
+    public List<UndirectedSparseGraph<V, E>> getSubnetworks() {
         List<UndirectedSparseGraph<V, E>> result = new ArrayList<>();
         for (int d = 0; d<= md; d++) {
             UndirectedSparseGraph<V, E> sn = new UndirectedSparseGraph<>();
@@ -87,8 +88,9 @@ public class KCoreDecomposition<V, E> {
                 }
             }
             for (E edge : g.getEdges()) {
-                V x = g.getSource(edge);
-                v y = g.getDest(edge);
+                Pair<V> pair = g.getEndpoints(edge);
+                V x = pair.getFirst();
+                V y = pair.getSecond();
                 if (deg.get(x) == deg.get(y) && deg.get(x) == d) {
                     sn.addEdge(edge, x, y);
                 }

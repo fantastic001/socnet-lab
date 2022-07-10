@@ -68,4 +68,48 @@ public class AppTest
             new CoalitionDetector<>(g, new AllPositiveLnikTransformer<>()).detect().size()
         );
     }
+
+    public void testKCoreDecompositionSimple() {
+        UndirectedSparseGraph<Integer, Integer> g = new UndirectedSparseGraph<>();
+        g.addVertex(1);
+        g.addVertex(2);
+        g.addEdge(1, 1, 2);
+        KCoreDecomposition<Integer, Integer> decomposition = new KCoreDecomposition<>(g);
+        decomposition.decompose();
+        assertEquals(1, decomposition.getShellIndex(1));
+        assertEquals(1, decomposition.getShellIndex(2));
+        assertEquals(2, decomposition.getSubnetworks().size());
+
+        g = new UndirectedSparseGraph<>();
+        g.addVertex(1);
+        g.addVertex(2);
+        g.addVertex(3);
+        g.addVertex(4);
+        g.addVertex(5);
+        g.addEdge(2, 1, 2);
+        g.addEdge(3, 1, 3);
+        g.addEdge(4, 1, 4);
+        g.addEdge(5, 1, 5);
+        decomposition = new KCoreDecomposition<>(g);
+        decomposition.decompose();
+        assertEquals(1, decomposition.getShellIndex(2));
+        assertEquals(1, decomposition.getShellIndex(3));
+        assertEquals(1, decomposition.getShellIndex(4));
+        assertEquals(1, decomposition.getShellIndex(5));
+        assertEquals(1, decomposition.getShellIndex(1));
+
+        g = new UndirectedSparseGraph<>();
+        g.addVertex(1);
+        g.addVertex(2);
+        g.addVertex(3);
+        g.addEdge(1, 1, 2);
+        g.addEdge(2, 1, 3);
+        g.addEdge(3, 3, 2);
+        decomposition = new KCoreDecomposition<>(g);
+        decomposition.decompose();
+        assertEquals(2, decomposition.getShellIndex(1));
+        assertEquals(2, decomposition.getShellIndex(2));
+        assertEquals(2, decomposition.getShellIndex(3));
+        assertEquals(2, decomposition.getSubnetworks().get(2).degree(1));
+    }
 }
