@@ -83,7 +83,7 @@ public class KCoreDecomposition<V, E> {
         for (int d = 0; d<= md; d++) {
             UndirectedSparseGraph<V, E> sn = new UndirectedSparseGraph<>();
             for (V vertex : g.getVertices()) {
-                if (deg.get(vertex) == d) {
+                if (deg.get(vertex) >= d) {
                     sn.addVertex(vertex);
                 }
             }
@@ -91,7 +91,7 @@ public class KCoreDecomposition<V, E> {
                 Pair<V> pair = g.getEndpoints(edge);
                 V x = pair.getFirst();
                 V y = pair.getSecond();
-                if (deg.get(x) == deg.get(y) && deg.get(x) == d) {
+                if (deg.get(y) >= d && deg.get(x) >= d) {
                     sn.addEdge(edge, x, y);
                 }
             }

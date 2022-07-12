@@ -111,5 +111,9 @@ public class AppTest
         assertEquals(2, decomposition.getShellIndex(2));
         assertEquals(2, decomposition.getShellIndex(3));
         assertEquals(2, decomposition.getSubnetworks().get(2).degree(1));
+
+        // 0-core is equal to entire graph 
+        assertEquals(3, decomposition.getSubnetworks().get(0).getVertexCount());
+        assertEquals(3, decomposition.getSubnetworks().get(0).getEdgeCount());
     }
 }
