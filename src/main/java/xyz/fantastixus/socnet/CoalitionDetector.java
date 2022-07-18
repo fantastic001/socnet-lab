@@ -3,6 +3,7 @@ package xyz.fantastixus.socnet;
 import java.text.CollationElementIterator;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.LinkedTransferQueue;
 
@@ -20,23 +21,26 @@ public class CoalitionDetector<V, E> {
         this.component_detector = new ComponentDetector<V, E>(t);
         this.transformer = t; 
     }
-    public List<UndirectedSparseGraph<V, Pair<V>>> detect() {
+    public List<UndirectedSparseGraph<V, E>> detect() {
         if (! isClusterable()) return null;
         int componentNumber = 0;
         boolean finished = false; 
-        List<UndirectedSparseGraph<V, Pair<V>>> result = new ArrayList<>();
+        List<UndirectedSparseGraph<V, E>> result = new ArrayList<>();
         while (!finished) {
-            UndirectedSparseGraph<V, Pair<V>> coalition = new UndirectedSparseGraph<>();
+            UndirectedSparseGraph<V, E> coalition = new UndirectedSparseGraph<>();
             for (V x : graph.getVertices()) {
                 if (components.get(x) == componentNumber) {
                     // add this node to newly created subgraph
                     coalition.addVertex(x);
                 }
             }
-            for (V x : coalition.getVertices()) {
+            for (V x : graph.getVertices()) {
                 for (V y : graph.getVertices()) {
                     if (! x.equals(y)) {
-                        coalition.addEdge(new Pair<V>(x, y), x,y);
+                        var edge = graph.findEdge(x, y);
+                        if (edge != null) {
+                            graph.addEdge(edge, graph.getEndpoints(edge).getFirst(), graph.getEndpoints(edge).getSecond());
+                        }
                     }
                 }
             }
@@ -55,7 +59,7 @@ public class CoalitionDetector<V, E> {
     }
 
     public List<Pair<V>> getLinksToBeRemoved() {
-        ArrayList<Pair<V>> result = new ArrayList<>();
+        LinkedList<Pair<V>> result = new LinkedList<>();
         components = this.component_detector.detectComponents(this.graph);
         for (V x : graph.getVertices()) {
             for (V y : graph.getVertices()) {

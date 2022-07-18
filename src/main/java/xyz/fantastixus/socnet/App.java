@@ -17,6 +17,7 @@ import java.util.Scanner;
 import edu.uci.ics.jung.graph.UndirectedGraph;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import edu.uci.ics.jung.graph.util.Pair;
+import xyz.fantastixus.socnet.transformers.InverseTransformer;
 import xyz.fantastixus.socnet.transformers.OriginalEdgeBasedLinkTransformer;
 
 public class App 
@@ -52,7 +53,7 @@ public class App
             }
             if (mode.equals("CD")) {
                 int w = scanner.nextInt();
-                if (w == 1) g.addEdge(new Pair<Integer>(u, v), v, u);
+                if (w < 1) g.addEdge(new Pair<Integer>(u, v), v, u);
             }
             else {
                 g.addEdge(new Pair<Integer>(u, v), u, v);
@@ -62,7 +63,7 @@ public class App
         if(mode.equals("CD")) {
             CoalitionDetector<Integer, Pair<Integer>> cd = new CoalitionDetector<Integer, Pair<Integer>>(
                 g, 
-                new OriginalEdgeBasedLinkTransformer<Integer, Pair<Integer>>(g)
+                new InverseTransformer<Integer>( new OriginalEdgeBasedLinkTransformer<Integer, Pair<Integer>>(g))
             );
             List<UndirectedSparseGraph<Integer, Pair<Integer>>> coalitions;
             if (! cd.isClusterable()) {
