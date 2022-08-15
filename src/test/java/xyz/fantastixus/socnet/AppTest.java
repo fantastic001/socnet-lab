@@ -64,6 +64,13 @@ public class AppTest
             new CoalitionDetector<>(g, new AllNegativeLinkTransformer<>()).detect().size()
         );
         assertEquals(
+            3, 
+            new CoalitionDetector<>(g, new AllPositiveLnikTransformer<>()).detect().size()
+        );
+        g.addEdge("a", 1, 2);
+        g.addEdge("b", 1, 3);
+
+        assertEquals(
             1, 
             new CoalitionDetector<>(g, new AllPositiveLnikTransformer<>()).detect().size()
         );

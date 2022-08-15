@@ -62,7 +62,7 @@ public class CoalitionDetector<V, E> {
         LinkedList<Pair<V>> result = new LinkedList<>();
         components = this.component_detector.detectComponents(this.graph);
         for (V x : graph.getVertices()) {
-            for (V y : graph.getVertices()) {
+            for (V y : graph.getNeighbors(x)) {
                 if (!x.equals(y) && components.get(x) == components.get(y) && !isPositive(x, y)) {
                     result.add(new Pair<V>(x, y));
                 }

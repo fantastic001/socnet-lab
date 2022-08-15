@@ -23,7 +23,7 @@ public class ComponentDetector<V, E> {
                     V x = s.pop();
                     if (! result.containsKey(x)) {
                         result.put(x, componentNumber);
-                        for (V y : graph.getVertices()) {
+                        for (V y : graph.getNeighbors(x)) {
                             if (transformer.transform(x, y) > 0) {
                                 s.push(y);
                             }
