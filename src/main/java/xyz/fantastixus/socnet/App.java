@@ -38,6 +38,7 @@ public class App
             System.exit(1);
             return;
         }
+        HashMap<Pair<Integer>, Integer> signs = new HashMap<>();
         HashSet<Integer> vertices = new HashSet<>();
         UndirectedSparseGraph<Integer, Pair<Integer>> g = new UndirectedSparseGraph<>();
         while (scanner.hasNext()) {
@@ -53,7 +54,8 @@ public class App
             }
             if (mode.equals("CD")) {
                 int w = scanner.nextInt();
-                if (w < 1) g.addEdge(new Pair<Integer>(u, v), v, u);
+                g.addEdge(new Pair<Integer>(u, v), v, u);
+                signs.put(new Pair<Integer>(u,v), w);
             }
             else {
                 g.addEdge(new Pair<Integer>(u, v), u, v);
@@ -63,7 +65,19 @@ public class App
         if(mode.equals("CD")) {
             CoalitionDetector<Integer, Pair<Integer>> cd = new CoalitionDetector<Integer, Pair<Integer>>(
                 g, 
-                new InverseTransformer<Integer>( new OriginalEdgeBasedLinkTransformer<Integer, Pair<Integer>>(g))
+                new LinkTransformer<Integer>() {
+
+                    @Override
+                    public int transform(Integer x, Integer y) {
+                        Integer sign =  signs.get(new Pair<Integer>(x,y));
+                        if (sign == null) 
+                        {
+                            return signs.get(new Pair<Integer>(y,x));
+                        }
+                        else return sign;
+                    }
+                    
+                }
             );
             List<UndirectedSparseGraph<Integer, Pair<Integer>>> coalitions;
             if (! cd.isClusterable()) {
