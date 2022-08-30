@@ -72,20 +72,23 @@ public class App
                         Integer sign =  signs.get(new Pair<Integer>(x,y));
                         if (sign == null) 
                         {
-                            return signs.get(new Pair<Integer>(y,x));
+                            return signs.get(new Pair<Integer>(y,x)) >= 0 ? 1 : -1;
                         }
-                        else return sign;
+                        else return sign >= 0 ? 1 : -1;
                     }
                     
                 }
             );
-            List<UndirectedSparseGraph<Integer, Pair<Integer>>> coalitions;
+            Collection<UndirectedSparseGraph<Integer, Pair<Integer>>> coalitions;
             if (! cd.isClusterable()) {
                 var links = cd.getLinksToBeRemoved();
                 System.out.println("Coalitions cannot be created, there are links to be removed:");
                 for (var link : links) {
                     System.out.println(link);
-                    g.removeEdge(link);
+                    boolean success = g.removeEdge(link);
+                    if (!success) {
+                        g.removeEdge(new Pair<Integer>(link.getSecond(), link.getFirst()));
+                    }
                 }
             }
             coalitions = cd.detect(); 
