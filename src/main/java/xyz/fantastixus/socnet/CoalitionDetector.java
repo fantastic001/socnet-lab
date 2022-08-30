@@ -63,7 +63,6 @@ public class CoalitionDetector<V, E> {
             }
             if (coalition.getVertexCount()>0) {
                 componentNumber++;
-                System.out.println(componentNumber);
                 result.add(coalition);
             }
             else {
