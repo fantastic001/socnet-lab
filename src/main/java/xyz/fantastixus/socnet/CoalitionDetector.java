@@ -7,6 +7,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.LinkedTransferQueue;
 
+import javax.smartcardio.CommandAPDU;
+
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import edu.uci.ics.jung.graph.util.Graphs;
 import edu.uci.ics.jung.graph.util.Pair;
@@ -25,27 +27,43 @@ public class CoalitionDetector<V, E> {
         if (! isClusterable()) return null;
         int componentNumber = 0;
         boolean finished = false; 
-        List<UndirectedSparseGraph<V, E>> result = new ArrayList<>();
+        List<UndirectedSparseGraph<V, E>> result = new LinkedList<>();
+        HashMap<Integer, LinkedList<V>> component_vertex_map = new HashMap<>();
+        for (V v : graph.getVertices()) 
+        {
+            if (! component_vertex_map.containsKey(components.get(v))) 
+            {
+                component_vertex_map.put(components.get(v), new LinkedList<>());
+            }
+            component_vertex_map.get(components.get(v)).add(v);
+        }
         while (!finished) {
             UndirectedSparseGraph<V, E> coalition = new UndirectedSparseGraph<>();
-            for (V x : graph.getVertices()) {
+            LinkedList<V> vertices =  component_vertex_map.get(componentNumber);
+            if (vertices == null) 
+            {
+                componentNumber++;
+                if (componentNumber > 0) break;
+            }
+            for (V x : vertices) {
                 if (components.get(x) == componentNumber) {
                     // add this node to newly created subgraph
                     coalition.addVertex(x);
                 }
             }
-            for (V x : graph.getVertices()) {
-                for (V y : graph.getVertices()) {
+            for (V x : vertices) {
+                for (V y : vertices) {
                     if (! x.equals(y)) {
                         var edge = graph.findEdge(x, y);
                         if (edge != null) {
-                            graph.addEdge(edge, graph.getEndpoints(edge).getFirst(), graph.getEndpoints(edge).getSecond());
+                            coalition.addEdge(edge, graph.getEndpoints(edge).getFirst(), graph.getEndpoints(edge).getSecond());
                         }
                     }
                 }
             }
             if (coalition.getVertexCount()>0) {
                 componentNumber++;
+                System.out.println(componentNumber);
                 result.add(coalition);
             }
             else {
