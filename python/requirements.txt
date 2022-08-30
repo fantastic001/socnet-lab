@@ -1,2 +1,5 @@
 networkx
+pandas
+tabulate
+scipy
 matplotlib
