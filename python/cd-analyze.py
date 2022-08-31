@@ -10,14 +10,14 @@ report = sys.argv[2]
 
 g = nx.Graph()
 
-for line in open(data):
-    x = line.strip().split()[0]
-    y = line.strip().split()[1]
-    w = line.strip().split()[2]
-    g.add_edge(x,y, weight=int(w))
+# for line in open(data):
+#     x = line.strip().split()[0]
+#     y = line.strip().split()[1]
+#     w = line.strip().split()[2]
+#     g.add_edge(x,y, weight=int(w))
 
-nx.draw_networkx(g.to_undirected(), with_labels=False, node_size=5)
-plt.savefig(sys.argv[3])
+# nx.draw_networkx(g.to_undirected(), with_labels=False, node_size=5)
+# plt.savefig(sys.argv[3])
 
 coals = [] 
 rl = 0 
