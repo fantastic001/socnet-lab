@@ -1,5 +1,7 @@
 package xyz.fantastixus.socnet;
 
+import java.util.Collection;
+
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -122,5 +124,48 @@ public class AppTest
         // 0-core is equal to entire graph 
         assertEquals(3, decomposition.getSubnetworks().get(0).getVertexCount());
         assertEquals(3, decomposition.getSubnetworks().get(0).getEdgeCount());
+    }
+
+    public void testKCoreWithReferenceImplementation() 
+    {
+        UndirectedSparseGraph<Integer, Integer> g = new UndirectedSparseGraph<>();
+        KCoreDecomposition<Integer, Integer> decomposition = new KCoreDecomposition<>(g);
+        for (int i = 0; i<50; i++) g.addVertex(i);
+        g.addEdge(2, 1, 2);
+        g.addEdge(3, 1, 3);
+        g.addEdge(4, 1, 4);
+        g.addEdge(5, 1, 5);
+        decomposition = new KCoreDecomposition<>(g);
+        decomposition.decompose();
+        assertEquals(getKCoreSimple(g, 2).getVertexCount(), decomposition.getSubnetworks().get(2).getVertexCount());
+
+    }
+
+    private UndirectedSparseGraph<Integer, Integer> getKCoreSimple(UndirectedSparseGraph<Integer, Integer> g, int k) 
+    {
+        UndirectedSparseGraph<Integer, Integer> graph = new UndirectedSparseGraph<>();
+        for (Integer v : g.getVertices()) 
+        {
+            graph.addVertex(v);
+        }
+        for (Integer e : g.getEdges()) 
+        {
+            graph.addEdge(e, g.getEndpoints(e).getFirst(), g.getEndpoints(e).getSecond());
+        }
+        boolean finished = false; 
+        while (! finished) 
+        {
+            finished = true;
+            Collection<Integer> vertices = graph.getVertices().stream().toList();
+            for (Integer v : vertices) 
+            {
+                if (graph.degree(v) < k) 
+                {
+                    graph.removeVertex(v);
+                    finished = false;
+                }
+            }
+        }
+        return graph;
     }
 }
